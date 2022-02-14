@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,19 +47,20 @@ public class ArtistJDBCTest {
         PreparedStatement stmt = conn.prepareStatement(Insert_sql);
         
         stmt.setInt(1,a.getArtistId());
-        stmt.setString(2,a.getTitle());
+        stmt.setString(2,a.getName());
        
         stmt.executeUpdate();
     }
     
     private void updateAArtist(Artist a) throws SQLException{
         String Update_sql = "UPDATE artist set "
-                +"title = ?"
-                +"WHERE ArtistId = ?";
+                +"name = ?"
+                +"WHERE artistId = ?";
         
         PreparedStatement ps = conn.prepareStatement(Update_sql);
-        ps.setString(1, a.getTitle());
+        
         ps.setInt(2, a.getArtistId());
+        ps.setString(1, a.getName());
         
         ps.executeUpdate();
     }
@@ -83,8 +85,8 @@ public class ArtistJDBCTest {
         
        if(rs.next()){
            a = new Artist();
-           a.setArtistId(rs.getInt("ArtistId"));
-           a.setTitle(rs.getNString("Title"));
+           a.setArtistId(rs.getInt("artistId"));
+           a.setName(rs.getString("name"));
        }
        
        return a;
@@ -105,49 +107,65 @@ public class ArtistJDBCTest {
     @Test
     public void createArtistTest() throws SQLException {
         // 1) Create a new customer
-        Artist a = new Artist(999,"Westlife");
+        Artist a = new Artist(1000,"Westlife");
         createAArtist(a);
 
         // 2) Find that customer in the DB to assert it was created successfully
-        Artist foundArtist = findAArtist(999);
+        Artist foundArtist = findAArtist(1000);
         assertNotNull(foundArtist);
-        assertEquals(999, foundArtist.getArtistId());
-
+        assertEquals(1000, foundArtist.getArtistId());
+        System.out.println("Create Test passed!");
         // 3) Cleanup
-        deleteAArtist(998);
+        deleteAArtist(1000);
     }
 
     @Test
-    public void readCustomerTest() throws SQLException {
+    public void readArtistTest() throws SQLException {
         // 1) Find a known customer in the DB
         Artist a = findAArtist(999);
         System.out.println(a.toString());
         // 2) Assert that we were able to read it successfully
         assertNotNull(a);
         assertEquals(999, a.getArtistId());
+        System.out.println("Read Test passed! \n the No.999 artist name is:{}"+a.getName());
+        
     }
 
     @Test
-    public void updateCustomerTest() throws SQLException {
+    public void updateArtistTest() throws SQLException {
         // 1) Update a known customer in the DB
         Artist a = findAArtist(999);
-        a.setTitle("**UPDATED**");
+        a.setName("**UPDATED**");
         updateAArtist(a);
 
         // 2) Find that same customer in the DB to assert the updates were
         //    applied to the database successfully
         Artist foundArtist = findAArtist(999);
         System.out.println(foundArtist.toString());
-        assertEquals("**UPDATED**", foundArtist.getTitle());
+        assertEquals("**UPDATED**", foundArtist.getName());
+        System.out.println("Update Test passed!");
     }
 
     @Test
-    public void deleteCustomerTest() {
+    public void deleteArtistTest() throws SQLException {
         // 1) Create a new customer (careful with beforeEach test record)
         // 2) Delete it
         // 3) Assert the deletion was successful.  Hint - would it be null?  
         //    depends on how you write your code, but that's one way to check
         //    Essentially, you are asserting that you could not find the record
+        Artist a = new Artist(1000,"Westlife");
+        createAArtist(a);
+        System.out.println("No.1000 artist created!");
+        // 2) Find that customer in the DB to assert it was created successfully
+        Artist foundArtist = findAArtist(1000);
+        assertNotNull(foundArtist);
+        assertEquals(1000, foundArtist.getArtistId());
+        System.out.println("Delete Test....");
+        // 3) Cleanup
+        deleteAArtist(1000);
+        Artist deleteArtist = findAArtist(1000);
+        assertNull(deleteArtist);
+        System.out.println("Delete successfully!");
     }
     
      @AfterEach

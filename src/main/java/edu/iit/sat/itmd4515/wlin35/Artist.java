@@ -12,21 +12,21 @@ import javax.validation.constraints.NotNull;
  */
 public class Artist {
     
-   @NotNull
-    private String title;
+    @NotNull
+    private String name;
    
     @NotNull
-    private int artistId;
+    private Integer artistId;
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getArtistId() {
+    public Integer getArtistId() {
         return artistId;
     }
 
@@ -37,14 +37,14 @@ public class Artist {
     public Artist() {
     }
 
-    public Artist(int artistId, String title) {
-        this.title = title;
+    public Artist(Integer artistId, String name) {
+        this.name = name;
         this.artistId = artistId;
     }
 
     @Override
     public String toString() {
-        return "Artist{" + " title=" + title + ", artistId=" + artistId + '}';
+        return "Artist{" + " name=" + name + ", artistId=" + artistId + '}';
     }
 
 }
